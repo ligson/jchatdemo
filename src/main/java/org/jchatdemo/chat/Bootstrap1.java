@@ -1,5 +1,7 @@
 package org.jchatdemo.chat;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -7,17 +9,20 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
+import java.util.Date;
 
 public class Bootstrap1 {
     public static void main(String[] args) throws Exception {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(200, 500);
+        frame.setSize(400, 500);
         frame.setTitle("JChat1");
 
         JTextPane textPane = new JTextPane();
         textPane.setEditable(false);
-        textPane.setContentType("text/html");
+        textPane.setBackground(Color.BLACK);
+        textPane.setForeground(Color.GREEN);
+        //textPane.setContentType("text/html");
 
         JTextField ipField = new JTextField();
         JTextField msgField = new JTextField();
@@ -67,7 +72,10 @@ public class Bootstrap1 {
                     }
                     if (packet.getData().length > 0) {
                         String message = new String(packet.getData(), 0, packet.getLength());
-                        textPane.setText(textPane.getText() + message);
+                        String line = packet.getAddress().getHostAddress() + ":" + packet.getPort() + "--" + DateFormatUtils.format(new Date(), "YYYY-MM-DD HH:mm:ss") + ":\n" + message + "\n";
+                        System.out.println("收到来自" + packet.getAddress().getHostAddress() + "的消息:" + message);
+                        textPane.setText(textPane.getText() + line);
+
                     }
                 }
             }
@@ -85,6 +93,7 @@ public class Bootstrap1 {
                 try {
                     DatagramPacket packet = new DatagramPacket(data, data.length, new InetSocketAddress(Inet4Address.getByName(ip), 28888));
                     datagramSocket.send(packet);
+
                 } catch (Exception e1) {
                     JOptionPane.showMessageDialog(frame, "Failed to send message");
                 }

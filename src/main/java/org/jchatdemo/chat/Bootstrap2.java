@@ -12,7 +12,7 @@ public class Bootstrap2 {
     public static void main(String[] args) throws Exception {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(200, 500);
+        frame.setSize(400, 500);
         frame.setTitle("JChat2");
 
         JTextPane textPane = new JTextPane();
@@ -74,8 +74,8 @@ public class Bootstrap2 {
 
 
         sendButton.addActionListener(e -> {
-            String ip = ipField.getText();
-            String message = msgField.getText();
+            String ip = ipField.getText().trim();
+            String message = msgField.getText().trim();
             if (ip.isEmpty() || message.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please enter a valid IP address");
             } else {
@@ -83,7 +83,9 @@ public class Bootstrap2 {
 
 
                 try {
-                    DatagramPacket packet = new DatagramPacket(data, data.length, new InetSocketAddress(Inet4Address.getByName(ip), 18888));
+                    int port = 18888;
+                    System.out.println("send data:" + ip + ":" + port);
+                    DatagramPacket packet = new DatagramPacket(data, data.length, new InetSocketAddress(Inet4Address.getByName(ip), port));
                     datagramSocket.send(packet);
                 } catch (Exception e1) {
                     JOptionPane.showMessageDialog(frame, "Failed to send message");
